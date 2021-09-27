@@ -81,6 +81,33 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Mirror"",
+            ""id"": ""9c606cbe-64ed-44b9-b519-25ad4dd046b0"",
+            ""actions"": [
+                {
+                    ""name"": ""Rotate"",
+                    ""type"": ""Value"",
+                    ""id"": ""97a7038b-8d99-4fae-80c8-64bd111e9f53"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a0f30400-233e-4542-b0ee-54e89fcdabc7"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -89,6 +116,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
         m_Movement_SideMovement = m_Movement.FindAction("SideMovement", throwIfNotFound: true);
         m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
+        // Mirror
+        m_Mirror = asset.FindActionMap("Mirror", throwIfNotFound: true);
+        m_Mirror_Rotate = m_Mirror.FindAction("Rotate", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -175,9 +205,46 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         }
     }
     public MovementActions @Movement => new MovementActions(this);
+
+    // Mirror
+    private readonly InputActionMap m_Mirror;
+    private IMirrorActions m_MirrorActionsCallbackInterface;
+    private readonly InputAction m_Mirror_Rotate;
+    public struct MirrorActions
+    {
+        private @PlayerControls m_Wrapper;
+        public MirrorActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Rotate => m_Wrapper.m_Mirror_Rotate;
+        public InputActionMap Get() { return m_Wrapper.m_Mirror; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MirrorActions set) { return set.Get(); }
+        public void SetCallbacks(IMirrorActions instance)
+        {
+            if (m_Wrapper.m_MirrorActionsCallbackInterface != null)
+            {
+                @Rotate.started -= m_Wrapper.m_MirrorActionsCallbackInterface.OnRotate;
+                @Rotate.performed -= m_Wrapper.m_MirrorActionsCallbackInterface.OnRotate;
+                @Rotate.canceled -= m_Wrapper.m_MirrorActionsCallbackInterface.OnRotate;
+            }
+            m_Wrapper.m_MirrorActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Rotate.started += instance.OnRotate;
+                @Rotate.performed += instance.OnRotate;
+                @Rotate.canceled += instance.OnRotate;
+            }
+        }
+    }
+    public MirrorActions @Mirror => new MirrorActions(this);
     public interface IMovementActions
     {
         void OnSideMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+    }
+    public interface IMirrorActions
+    {
+        void OnRotate(InputAction.CallbackContext context);
     }
 }

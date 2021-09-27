@@ -68,6 +68,33 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "Mirror",
+            "id": "9c606cbe-64ed-44b9-b519-25ad4dd046b0",
+            "actions": [
+                {
+                    "name": "Rotate",
+                    "type": "Value",
+                    "id": "97a7038b-8d99-4fae-80c8-64bd111e9f53",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a0f30400-233e-4542-b0ee-54e89fcdabc7",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
