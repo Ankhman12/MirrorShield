@@ -13,6 +13,7 @@ public class Mirror : MonoBehaviour
     Vector2 unitVector;
     public Transform parentPos;
     bool updateRotation;
+    bool rotateMirrorLocally = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,12 +22,15 @@ public class Mirror : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        
+        
+
         CalculatePosition();
         if (updateRotation)
         {
             transform.localPosition = rotationRadius * unitVector;
-            transform.LookAt(parentPos.position);
-            transform.eulerAngles = transform.eulerAngles + new Vector3(90, 0, 0);
+            transform.up = parentPos.position - transform.position;
+            //transform.eulerAngles = transform.eulerAngles + new Vector3(0, 0, 0);
         }
     }
     void CalculatePosition()
@@ -34,7 +38,14 @@ public class Mirror : MonoBehaviour
         updateRotation = false;
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         Vector2 worldPos2 = new Vector2(worldPos.x, worldPos.y);
-        Vector2 parentPos2 = new Vector2(parentPos.position.x, parentPos.position.y);
+
+        Vector2 parentPos2;
+        if (rotateMirrorLocally) {
+            parentPos2 = new Vector2(parentPos.position.x, parentPos.position.y);
+        }
+        else {
+            parentPos2 = new Vector2(transform.position.x, transform.position.y);
+        }
         if (Vector2.Angle(parentPos2, worldPos2) > minAngle)
         {
             unitVector = (worldPos2 - parentPos2).normalized;
