@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 779129863}
   - component: {fileID: 779129862}
   - component: {fileID: 779129861}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Middleground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -216,9 +216,9 @@ TilemapRenderer:
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
-  m_SortOrder: 0
-  m_Mode: 0
-  m_DetectChunkCullingBounds: 0
+  m_SortOrder: 2
+  m_Mode: 1
+  m_DetectChunkCullingBounds: 1
   m_MaskInteraction: 0
 --- !u!1839735485 &779129863
 Tilemap:
@@ -952,7 +952,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 3
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: cf8248c1ffa5e18468a31e7a7e31a21a, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -966,7 +966,7 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 2031062432}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: cf8248c1ffa5e18468a31e7a7e31a21a, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -987,6 +987,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   jumpSpeed: 15
+  groundedLayers:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!212 &2031062436
 SpriteRenderer:
   m_ObjectHideFlags: 0

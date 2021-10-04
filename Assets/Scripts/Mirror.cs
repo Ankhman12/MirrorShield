@@ -9,6 +9,7 @@ public class Mirror : MonoBehaviour
 {
     public float rotationRadius;
     Vector2 unitVector;
+    //Position around which the mirror rotates
     public Transform parentPos;
     bool rotateMirrorLocally = false;
 
@@ -21,7 +22,9 @@ public class Mirror : MonoBehaviour
     }
     void CalculatePosition()
     {
+        //Finds the world position of the mouse cursor
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        //Translates the cursor's 3D position into 2D space
         Vector2 mousePos = new Vector2(worldPos.x, worldPos.y);
 
         Vector2 parentPos2;
