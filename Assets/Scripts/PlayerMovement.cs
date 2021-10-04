@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D player;
     int dir = 0;
     float distanceToGround;
+    public LayerMask groundedLayers;
     void Start()
     {
         distanceToGround = GetComponent<Collider2D>().bounds.extents.y;
@@ -30,10 +31,11 @@ public class PlayerMovement : MonoBehaviour
     {
         dir = (int)ctx.ReadValue <float>();
     }
+    //Causes the player to jump
     void Jump(CallbackContext ctx)
     {
         if (isGrounded())
-            player.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
+            player.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse); ;
     }
     private void FixedUpdate()
     {
@@ -41,6 +43,6 @@ public class PlayerMovement : MonoBehaviour
     }
     bool isGrounded()
     {
-        return Physics2D.Raycast(transform.position, -Vector3.up, distanceToGround + .1f);
+        return Physics2D.Raycast(transform.position, -Vector3.up, distanceToGround + .1f, groundedLayers);
     }
 }
