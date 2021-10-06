@@ -23,8 +23,6 @@ public class Laser : MonoBehaviour
         lr.positionCount = maxReflectionCount + 1;
         //reflectPoints = new Vector3[maxReflectionCount];
         reflectPoints = new LinkedList<Vector3>();
-        Instantiate(contactFX);
-        enableLaser();
     }
 
 
@@ -35,13 +33,15 @@ public class Laser : MonoBehaviour
 
     private void renderLaser() 
     {
-        contactFX.transform.position = reflectPoints.Last.Value;
-        Debug.Log(contactFX.transform.position);
 
         Vector3[] arr = new Vector3[maxReflectionCount + 1];
         int size = reflectPoints.Count;
+        if (size > maxReflectionCount) {
+            size = maxReflectionCount;
+        }
         for (int i = 0; i < size; i++) 
         {
+            //Debug.Log(i);
             arr[i] = reflectPoints.First.Value;
             reflectPoints.RemoveFirst();
         }
@@ -60,20 +60,20 @@ public class Laser : MonoBehaviour
         if (hit.collider != null)
         {
             reflectPoints.AddFirst(this.transform.position);
-            if (hit.collider.gameObject.CompareTag(mirrorTag))
+            //Debug.Log(hit.collider.transform.gameObject);
+            if (hit.collider.transform.gameObject.CompareTag(mirrorTag))
             {
                 Reflect(this.transform.position + this.transform.right * 0.75f, this.transform.right, minReflectionCount);
             }
             else {
                 reflectPoints.AddLast(hit.point);
             }
-            //lr.SetPositions(reflectPoints);
             renderLaser();
-            //Debug.Log("boop");
         }
         else
         {
             //contactFX.Pause();
+            lr.SetPosition(0, this.transform.position);
             lr.SetPosition(1, new Vector2(2000, 0));
         }
     }
@@ -102,30 +102,12 @@ public class Laser : MonoBehaviour
 
         reflectPoints.AddLast(new Vector3(position.x, position.y, 0));
 
-        Debug.DrawLine(startingPosition, position, Color.blue);
-        
+        //Debug.DrawLine(startingPosition, position, Color.blue);
 
-        if (reflectionCount == 2) 
-        {
-            Debug.Log(hit2.collider);
-        }
-
-        if (hit2.collider.gameObject.CompareTag(mirrorTag))
+        if (hit2.collider != null && hit2.collider.transform.gameObject.CompareTag(mirrorTag))
         {
             Reflect(position, direction, reflectionCount + 1);
         }
 
-    }
-
-    void enableLaser()
-    {
-        lr.enabled = true;
-        contactFX.GetComponentInChildren<ParticleSystem>().Play();
-    }
-
-    void disableLaser()
-    {
-        lr.enabled = false;
-        contactFX.GetComponentInChildren<ParticleSystem>().Stop();
     }
 }
