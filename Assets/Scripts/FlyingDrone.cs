@@ -57,9 +57,9 @@ public class FlyingDrone : MonoBehaviour
                 DisableCannon();
             return;
         }
-        Vector2 fireDir = (cannon.position - playerObj.transform.position).normalized;
+        Vector2 fireDir = (playerObj.transform.position-cannon.position).normalized;
         RaycastHit2D hit = Physics2D.Raycast(cannon.position, fireDir);
-        if (hit.collider == null || ((1 << hit.collider.gameObject.layer) & player) != 0)
+        if (hit.collider == null || ((1 << hit.collider.gameObject.layer) & player) == 0)
         {
             if (cannon.gameObject.activeInHierarchy)
                 DisableCannon();
@@ -89,7 +89,10 @@ public class FlyingDrone : MonoBehaviour
     {
         Attack(collision);
     }
-
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        DisableCannon();
+    }
     void DisableCannon()
     {
         cannon.gameObject.SetActive(false);
