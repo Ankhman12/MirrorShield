@@ -4,11 +4,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
 public class PlayerMovement : MonoBehaviour
 {
+    public Image[] hearts;
+    int health = 3;
+
     //Integer values for the player's speed and jumpSpeed
     public float speed;
     public float jumpSpeed;
@@ -29,6 +34,9 @@ public class PlayerMovement : MonoBehaviour
     bool isGroundDash = false; // Check whether the player is currently dashing on the ground
     bool isAirDash = false;    //                                                 or aerially
     float dashTimer = 0;   // Used to check how much time is left in dash.
+
+    public Sprite heart;
+    public Sprite emptyHeart;
     
     void Start()
     {
@@ -106,6 +114,28 @@ public class PlayerMovement : MonoBehaviour
             dashTimer += Time.deltaTime;
             player.velocity = new Vector2(dashdir * dashSpeed * Time.fixedDeltaTime * 50, player.velocity.y);
             return true;
+        }
+    }
+
+    public void Damage()
+    {
+        if (health == 0)
+            return;
+        health--;
+        hearts[health].sprite = emptyHeart;
+        if (health <= 0)
+        {
+            Debug.Log("Die");
+            SceneManager.LoadScene(0);
+        }
+    }
+
+    public void AddHealth()
+    {
+        if (health < hearts.Length-1)
+        {
+            health++;
+            hearts[health].sprite = heart;
         }
     }
 }
