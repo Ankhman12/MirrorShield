@@ -12,10 +12,17 @@ public class Laser : MonoBehaviour
     public float maxStepDistance = 200f;
 
     string mirrorTag = "Mirror";
+    string playerTag = "Player";
 
     //Vector3[] reflectPoints;
 
     LinkedList<Vector3> reflectPoints;
+
+    //amount of time between heart removals
+    float damageWaitTime = 3f;
+    //current wait time
+    float damageWait = 0f;
+    bool damage = true;
 
     void Start()
     {
@@ -29,6 +36,15 @@ public class Laser : MonoBehaviour
     void Update()
     {
         shootLaser();
+        if (!damage)
+        {
+            damageWait += Time.deltaTime;
+            if (damageWait >= damageWaitTime)
+            {
+                damage = true;
+                damageWait = 0;
+            }
+        }
     }
 
     private void renderLaser() 
@@ -67,6 +83,11 @@ public class Laser : MonoBehaviour
             }
             else {
                 reflectPoints.AddLast(hit.point);
+                if (hit.collider.gameObject.CompareTag(playerTag) && damage)
+                {
+                    hit.collider.gameObject.GetComponent<PlayerMovement>().Damage();
+                    damage = false;
+                }
             }
             renderLaser();
         }
