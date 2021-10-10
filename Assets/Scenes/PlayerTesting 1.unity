@@ -647,9 +647,9 @@ GameObject:
   - component: {fileID: 750535239}
   - component: {fileID: 750535238}
   - component: {fileID: 750535240}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square
-  m_TagString: Untagged
+  m_TagString: Mirror
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1012,7 +1012,7 @@ GameObject:
   - component: {fileID: 1527296798}
   m_Layer: 0
   m_Name: Square (1)
-  m_TagString: Untagged
+  m_TagString: Breakable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -13,6 +13,7 @@ public class Laser : MonoBehaviour
 
     string mirrorTag = "Mirror";
     string playerTag = "Player";
+    string breakableTag = "Breakable";
 
     //Vector3[] reflectPoints;
 
@@ -87,6 +88,11 @@ public class Laser : MonoBehaviour
                 {
                     hit.collider.gameObject.GetComponent<PlayerMovement>().Damage();
                     damage = false;
+                } 
+                else if (hit.collider.gameObject.CompareTag(breakableTag))
+                {
+                    Destroy(hit.collider.gameObject);
+                    shootLaser();
                 }
             }
             renderLaser();
@@ -124,11 +130,22 @@ public class Laser : MonoBehaviour
         reflectPoints.AddLast(new Vector3(position.x, position.y, 0));
 
         //Debug.DrawLine(startingPosition, position, Color.blue);
-
-        if (hit2.collider != null && hit2.collider.transform.gameObject.CompareTag(mirrorTag))
+        if (hit2.collider != null)
         {
-            Reflect(position, direction, reflectionCount + 1);
+            if (hit2.collider.transform.gameObject.CompareTag(mirrorTag))
+            {
+                Reflect(position, direction, reflectionCount + 1);
+            }
+            else if (hit2.collider.gameObject.CompareTag(playerTag) && damage)
+            {
+                hit2.collider.gameObject.GetComponent<PlayerMovement>().Damage();
+                damage = false;
+            }
+            else if (hit2.collider.gameObject.CompareTag(breakableTag))
+            {
+                Destroy(hit2.collider.gameObject);
+                shootLaser();
+            }
         }
-
     }
 }
