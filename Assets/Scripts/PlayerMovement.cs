@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 using static UnityEngine.InputSystem.InputAction;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     //Integer values for the player's speed and jumpSpeed
     public float speed;
     public float jumpSpeed;
+    public float jumpTime;
     // Values for the timed duration of the dash in seconds, along with the speed of the dash.
     public float dashDuration;
     public float groundDashSpeed;
@@ -31,12 +33,20 @@ public class PlayerMovement : MonoBehaviour
     int dashdir = 0;
     float distanceToGround;
 
+    bool canJump = false;
+    bool isJumping = false;
+    bool grounded = false;
+    float airTimer = 0f;
     bool isGroundDash = false; // Check whether the player is currently dashing on the ground
     bool isAirDash = false;    //                                                 or aerially
     float dashTimer = 0;   // Used to check how much time is left in dash.
 
     public Sprite heart;
     public Sprite emptyHeart;
+
+    //Character sprite controllers
+    public SpriteRenderer spriteRenderer;
+    public Animator anim;
     
     void Start()
     {
@@ -49,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
         controls.Movement.SideMovement.canceled += ctx => dir = 0;
         controls.Movement.SideMovement.Enable();
         controls.Movement.Jump.performed += Jump;
+        controls.Movement.Jump.canceled += Jump;
         controls.Movement.Jump.Enable();
         controls.Movement.Dash.performed += Dash;
         controls.Movement.Dash.Enable();
@@ -62,15 +73,31 @@ public class PlayerMovement : MonoBehaviour
     //Causes the player to jump
     void Jump(CallbackContext ctx)
     {
-        if (isGrounded())
-            player.AddForce(new Vector2(0, jumpSpeed * Time.fixedDeltaTime * 50), ForceMode2D.Impulse); ;
+        //if (canJump)
+        //    player.AddForce(new Vector2(0, jumpSpeed * Time.fixedDeltaTime * 50), ForceMode2D.Impulse);
+               
+        //Debug.Log(ctx.performed);
+        //Debug.Log(ctx.canceled);
+        if (ctx.canceled)
+        {
+            //Debug.Log("boop");
+            isJumping = false;
+        }
+        if (ctx.performed) {
+            //Debug.Log("beep");
+            isJumping = true;
+        }
+        
+        
+    
     }
     // Causes the player to dash left or right. If in air, change to an aerial dash.
     void Dash(CallbackContext ctx) 
     {
         //dashdir = (int)ctx.ReadValue<float>();
-        if (isGrounded()) { // Grounded Dash
+        if (grounded) { // Grounded Dash
             isGroundDash = true;
+            
         }
         else // Aerial Jetpack Dash
         {
@@ -79,18 +106,60 @@ public class PlayerMovement : MonoBehaviour
     }
     private void FixedUpdate()
     {
+
+        grounded = isGrounded();
+        anim.SetBool("onGround", grounded);
+        anim.SetBool("inAir", !grounded);
+        if (!grounded)
+        {
+            airTimer += Time.fixedDeltaTime;
+        }
+        else {
+            airTimer = 0f;
+            canJump = true;
+        }
+        if (airTimer > jumpTime) {
+            canJump = false;
+            anim.SetBool("Jumping", false);
+        }
+        if (canJump && isJumping)
+        {
+            anim.SetBool("Jumping", true);
+            player.AddForce(new Vector2(0, jumpSpeed * Time.fixedDeltaTime * 50), ForceMode2D.Impulse);
+        }
+
+        if (dir == 0)
+        {
+            anim.SetBool("isMoving", false);
+        }
+        else {
+            anim.SetBool("isMoving", true);
+        }
+        if (dir < 0)
+        {
+            Flip(true);
+        }
+        else {
+            Flip(false);
+        }
         if (!isGroundDash && !isAirDash) // Walking
         {
+
             player.velocity = new Vector2(dir * speed * Time.fixedDeltaTime * 50, player.velocity.y);
         }
         else if (isGroundDash && !isAirDash) // Ground dash
         {
             isGroundDash = dash(groundDashSpeed);
+            anim.SetBool("isDashing", isGroundDash);
         }
         else if (isAirDash) // Aerial dash
         {
             // Use jetpack fuel / fuel check here.
             isAirDash = dash(airDashSpeed);
+            anim.SetBool("isDashing", isAirDash);
+        }
+        if (isAirDash || isGroundDash) {
+            anim.SetBool("isDashing", true);
         }
     }
     
@@ -137,5 +206,9 @@ public class PlayerMovement : MonoBehaviour
             health++;
             hearts[health].sprite = heart;
         }
+    }
+
+    private void Flip(bool flipped) {
+        spriteRenderer.flipX = flipped;
     }
 }

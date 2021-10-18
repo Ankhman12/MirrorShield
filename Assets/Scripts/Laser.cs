@@ -23,7 +23,7 @@ public class Laser : MonoBehaviour
     float damageWaitTime = 3f;
     //current wait time
     float damageWait = 0f;
-    bool damage = true;
+    bool damageable = true;
 
     void Start()
     {
@@ -37,12 +37,12 @@ public class Laser : MonoBehaviour
     void Update()
     {
         shootLaser();
-        if (!damage)
+        if (!damageable)
         {
             damageWait += Time.deltaTime;
             if (damageWait >= damageWaitTime)
             {
-                damage = true;
+                damageable = true;
                 damageWait = 0;
             }
         }
@@ -84,10 +84,10 @@ public class Laser : MonoBehaviour
             }
             else {
                 reflectPoints.AddLast(hit.point);
-                if (hit.collider.gameObject.CompareTag(playerTag) && damage)
+                if (hit.collider.gameObject.CompareTag(playerTag) && damageable)
                 {
                     hit.collider.gameObject.GetComponent<PlayerMovement>().Damage();
-                    damage = false;
+                    damageable = false;
                 } 
                 else if (hit.collider.gameObject.CompareTag(breakableTag))
                 {
@@ -136,10 +136,10 @@ public class Laser : MonoBehaviour
             {
                 Reflect(position, direction, reflectionCount + 1);
             }
-            else if (hit2.collider.gameObject.CompareTag(playerTag) && damage)
+            else if (hit2.collider.gameObject.CompareTag(playerTag) && damageable)
             {
                 hit2.collider.gameObject.GetComponent<PlayerMovement>().Damage();
-                damage = false;
+                damageable = false;
             }
             else if (hit2.collider.gameObject.CompareTag(breakableTag))
             {
