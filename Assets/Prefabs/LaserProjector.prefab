@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b89a5c3d70dbfa46b51b2319e49d99d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  contactFX: {fileID: 0}
+  maxReflectionCount: 5
   maxStepDistance: 200
 --- !u!120 &8295182547609631396
 LineRenderer:
@@ -64,7 +66,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 09314e45a56d2e24cbbbfae49ce0c10d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,7 +101,16 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.19767353
+        value: 0.20513251
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.26964188
+        value: 0.37393546
         inSlope: -0.3267763
         outSlope: -0.3267763
         tangentMode: 0
@@ -108,7 +119,7 @@ LineRenderer:
         outWeight: 0.24196595
       - serializedVersion: 3
         time: 1
-        value: 0.058135986
+        value: 0.0779973
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -120,8 +131,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 0.619215, b: 0.16470587, a: 1}
-      key1: {r: 0.9528302, g: 0.38113207, b: 0.8914255, a: 1}
+      key0: {r: 1, g: 0.5415094, b: 0.58405, a: 1}
+      key1: {r: 1, g: 0.89056605, b: 0.90008205, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -149,7 +160,7 @@ LineRenderer:
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 0
-    alignment: 0
+    alignment: 1
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0

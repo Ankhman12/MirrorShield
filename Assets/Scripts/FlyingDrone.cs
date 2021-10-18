@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class FlyingDrone : MonoBehaviour
 {
-    public enum MovementType { LeftRight, UpDown, }
+    public enum MovementType { LeftRight, UpDown, FollowPath};
     public MovementType movementType;
+    public PatrolPath patrol { get; set; }
+    public float PathReachingRadius = 2f;
+    int m_PathDestinationNodeIndex;
+    bool patrolOrder = false;
     public float maxCoord;
     public float minCoord;
     public LayerMask player;
@@ -16,22 +20,36 @@ public class FlyingDrone : MonoBehaviour
     bool playerSpotted;
     bool paused;
     float pauseTime;
+
+    GameObject Player;
+
+    [Header("Patrol Settings")]
+    [Tooltip("Patrol Time")]
+    [SerializeField] float patrolWaitTime;
+    float waitTimer;
+
     // Start is called before the first frame update
     void Start()
     {
         cannon = GetComponentsInChildren(typeof(Transform))[1] as Transform;
         cannon.gameObject.SetActive(false);
-        if (movementType.Equals(MovementType.LeftRight))
+        if (movementType == MovementType.LeftRight) {
             dir = new Vector2(1, 0);
-        else if (movementType.Equals(MovementType.UpDown))
+        }
+        else if (movementType == MovementType.UpDown) {
             dir = new Vector2(0, 1);
+        }
+        else if (movementType == MovementType.FollowPath) {
+            SetPathDestinationToClosestNode();
+        }
+            
     }
 
     void Update()
     {
         if (!playerSpotted && !paused)
         {
-            transform.position += new Vector3(dir.x * flySpeed * Time.deltaTime, dir.y * flySpeed * Time.deltaTime,0);
+            transform.position += new Vector3(dir.x * flySpeed * Time.deltaTime, dir.y * flySpeed * Time.deltaTime, 0);
         }
         else if (paused)
         {
@@ -41,6 +59,12 @@ public class FlyingDrone : MonoBehaviour
                 paused = false;
                 pauseTime = 0;
             }
+        }
+
+        if (movementType == MovementType.FollowPath) {
+            UpdatePathDestination(patrolOrder);
+            Vector3 currentDest = GetDestinationOnPath();
+            dir = (currentDest - transform.position).normalized; 
         }
     }
 
@@ -76,8 +100,29 @@ public class FlyingDrone : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        dir *= -1;
-        paused = true;
+        if (movementType != MovementType.FollowPath)
+        {
+            dir *= -1;
+        }
+        else {
+            patrolOrder = !patrolOrder;
+            UpdatePathDestination(patrolOrder);
+        }
+        //paused = true;
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Player = collision.gameObject;
+            Player.transform.SetParent(this.transform);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (Player != null)//collision.gameObject.CompareTag("Player"))
+        {
+            Player.transform.SetParent(null);
+            Player = null;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -98,5 +143,103 @@ public class FlyingDrone : MonoBehaviour
         cannon.gameObject.SetActive(false);
         playerSpotted = false;
         paused = false;
+    }
+
+    bool IsPathValid()
+    {
+        return patrol && patrol.PathNodes.Count > 0;
+    }
+
+    public void ResetPathDestination()
+    {
+        m_PathDestinationNodeIndex = 0;
+    }
+
+    public void SetPathDestinationToClosestNode()
+    {
+        if (IsPathValid())
+        {
+            int closestPathNodeIndex = 0;
+            for (int i = 0; i < patrol.PathNodes.Count; i++)
+            {
+                float distanceToPathNode = patrol.GetDistanceToNode(transform.position, i);
+                if (distanceToPathNode < patrol.GetDistanceToNode(transform.position, closestPathNodeIndex))
+                {
+                    closestPathNodeIndex = i;
+                }
+            }
+
+            m_PathDestinationNodeIndex = closestPathNodeIndex;
+        }
+        else
+        {
+            m_PathDestinationNodeIndex = 0;
+        }
+    }
+
+    public Vector3 GetDestinationOnPath()
+    {
+        if (IsPathValid())
+        {
+            return patrol.GetPositionOfPathNode(m_PathDestinationNodeIndex);
+        }
+        else
+        {
+            return transform.position;
+        }
+    }
+
+    public void UpdatePathDestination(bool inverseOrder = false)
+    {
+        if (IsPathValid())
+        {
+            // Check if reached the path destination
+            if (new Vector3(transform.position.x - GetDestinationOnPath().x, transform.position.y - GetDestinationOnPath().y, 0).magnitude <= PathReachingRadius)
+            {
+                //Allows guard to wait at each patrol point for a predefined amount of time
+                if (waitTimer < patrolWaitTime)
+                {
+                    waitTimer += Time.deltaTime;
+                }
+                else
+                {
+                    //reset wait timer
+                    waitTimer = 0f;
+
+                    // increment path destination index
+                    m_PathDestinationNodeIndex =
+                        inverseOrder ? (m_PathDestinationNodeIndex - 1) : (m_PathDestinationNodeIndex + 1);
+                    if (m_PathDestinationNodeIndex < 0)
+                    {
+                        m_PathDestinationNodeIndex += patrol.PathNodes.Count;
+                    }
+
+                    if (m_PathDestinationNodeIndex >= patrol.PathNodes.Count)
+                    {
+                        m_PathDestinationNodeIndex -= patrol.PathNodes.Count;
+                        //ResetPathDestination();
+                    }
+
+                }
+            }
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        // Path reaching range
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, PathReachingRadius);
+
+        //if (DetectionModule != null)
+        //{
+        //    // Detection range
+        //    Gizmos.color = DetectionRangeColor;
+        //    Gizmos.DrawWireSphere(transform.position, DetectionModule.DetectionRange);
+
+        //    // Attack range
+        //    Gizmos.color = AttackRangeColor;
+        //    Gizmos.DrawWireSphere(transform.position, DetectionModule.AttackRange);
+        //}
     }
 }

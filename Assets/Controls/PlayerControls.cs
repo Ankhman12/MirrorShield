@@ -40,7 +40,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""id"": ""56bc21cc-ce80-42d1-8ebd-ec67aec39bcc"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap""
+                    ""interactions"": ""MultiTap(tapTime=0.1)""
                 }
             ],
             ""bindings"": [
