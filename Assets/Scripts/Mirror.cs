@@ -18,7 +18,8 @@ public class Mirror : MonoBehaviour
     {
         CalculatePosition();
         transform.localPosition = rotationRadius * unitVector;
-        transform.up = parentPos.position - transform.position;
+        transform.right = parentPos.position - transform.position;
+        transform.right = -transform.right;
     }
     void CalculatePosition()
     {
