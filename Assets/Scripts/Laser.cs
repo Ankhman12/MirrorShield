@@ -12,10 +12,18 @@ public class Laser : MonoBehaviour
     public float maxStepDistance = 200f;
 
     string mirrorTag = "Mirror";
+    string playerTag = "Player";
+    string breakableTag = "Breakable";
 
     //Vector3[] reflectPoints;
 
     LinkedList<Vector3> reflectPoints;
+
+    //amount of time between heart removals
+    float damageWaitTime = 3f;
+    //current wait time
+    float damageWait = 0f;
+    bool damageable = true;
 
     void Start()
     {
@@ -29,6 +37,15 @@ public class Laser : MonoBehaviour
     void Update()
     {
         shootLaser();
+        if (!damageable)
+        {
+            damageWait += Time.deltaTime;
+            if (damageWait >= damageWaitTime)
+            {
+                damageable = true;
+                damageWait = 0;
+            }
+        }
     }
 
     private void renderLaser() 
@@ -67,6 +84,16 @@ public class Laser : MonoBehaviour
             }
             else {
                 reflectPoints.AddLast(hit.point);
+                if (hit.collider.gameObject.CompareTag(playerTag) && damageable)
+                {
+                    hit.collider.gameObject.GetComponent<PlayerMovement>().Damage();
+                    damageable = false;
+                } 
+                else if (hit.collider.gameObject.CompareTag(breakableTag))
+                {
+                    Destroy(hit.collider.gameObject);
+                    shootLaser();
+                }
             }
             renderLaser();
         }
@@ -103,11 +130,22 @@ public class Laser : MonoBehaviour
         reflectPoints.AddLast(new Vector3(position.x, position.y, 0));
 
         //Debug.DrawLine(startingPosition, position, Color.blue);
-
-        if (hit2.collider != null && hit2.collider.transform.gameObject.CompareTag(mirrorTag))
+        if (hit2.collider != null)
         {
-            Reflect(position, direction, reflectionCount + 1);
+            if (hit2.collider.transform.gameObject.CompareTag(mirrorTag))
+            {
+                Reflect(position, direction, reflectionCount + 1);
+            }
+            else if (hit2.collider.gameObject.CompareTag(playerTag) && damageable)
+            {
+                hit2.collider.gameObject.GetComponent<PlayerMovement>().Damage();
+                damageable = false;
+            }
+            else if (hit2.collider.gameObject.CompareTag(breakableTag))
+            {
+                Destroy(hit2.collider.gameObject);
+                shootLaser();
+            }
         }
-
     }
 }

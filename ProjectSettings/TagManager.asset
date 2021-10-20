@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Mirror
+  - Breakable
+  - Enemy
+  - Plate
   layers:
   - Default
   - TransparentFX
@@ -39,6 +42,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 3668653969
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
