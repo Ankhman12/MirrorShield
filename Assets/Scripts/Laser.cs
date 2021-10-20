@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
+    public bool menu = false;
+    
     private LineRenderer lr;
     public GameObject contactFX;
 
@@ -83,9 +85,10 @@ public class Laser : MonoBehaviour
             {
                 Reflect(this.transform.position + this.transform.right * 0.75f, this.transform.right, minReflectionCount);
             }
-            else {
+            else
+            {
                 reflectPoints.AddLast(hit.point);
-                if (hit.collider.gameObject.CompareTag(playerTag) && damageable)
+                if (hit.collider.gameObject.CompareTag(playerTag) && damageable && !menu)
                 {
                     hit.collider.gameObject.GetComponent<PlayerMovement>().Damage();
                     damageable = false;
