@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
     public Image[] hearts;
-    int health = 3;
+    int health;
 
     //Integer values for the player's speed and jumpSpeed
     public float speed;
@@ -26,6 +26,10 @@ public class PlayerMovement : MonoBehaviour
     //Tells the isGrounded function which layers to check if the player is grounded on.
     //Prevents the player from jumping off colliders without restriction (including the player's own collider)
     public LayerMask groundedLayers;
+    //Damage screen
+    public GameObject damageScreen;
+    //Time the damage is shown
+    public float damageTime;
 
     PlayerControls controls;
     Rigidbody2D player;
@@ -41,6 +45,9 @@ public class PlayerMovement : MonoBehaviour
     bool isAirDash = false;    //                                                 or aerially
     float dashTimer = 0;   // Used to check how much time is left in dash.
 
+    bool damaged = false;
+    float damageTimer = 0;
+
     public Sprite heart;
     public Sprite emptyHeart;
 
@@ -53,6 +60,7 @@ public class PlayerMovement : MonoBehaviour
         distanceToGround = GetComponent<Collider2D>().bounds.extents.y;
         controls = new PlayerControls();
         player = GetComponent<Rigidbody2D>();
+        health = hearts.Length;
 
         #region ControlMapping
         controls.Movement.SideMovement.performed += SideMovement;
@@ -110,6 +118,15 @@ public class PlayerMovement : MonoBehaviour
         grounded = isGrounded();
         anim.SetBool("onGround", grounded);
         anim.SetBool("inAir", !grounded);
+        if (damaged)
+        {
+            damageTimer += Time.fixedDeltaTime;
+            if (damageTimer >= damageTime)
+            {
+                damageScreen.SetActive(false);
+                damaged = false;
+            }
+        }
         if (!grounded)
         {
             airTimer += Time.fixedDeltaTime;
@@ -188,9 +205,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void Damage()
     {
-        if (health == 0)
-            return;
         health--;
+        damageScreen.SetActive(true);
+        damageTimer = 0;
+        damaged = true;
         hearts[health].sprite = emptyHeart;
         if (health <= 0)
         {
