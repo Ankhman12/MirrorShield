@@ -12,7 +12,7 @@ public class MovingPlatform : MonoBehaviour
 
     int m_platformIndex;
     public float platformSpeed;
-    public bool powered;
+    public PowerState powered;
 
     [Tooltip("Time platform waits at each end of its track")]
     public float platformWaitTime;
@@ -33,7 +33,7 @@ public class MovingPlatform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (powered)
+        if (powered == PowerState.On)
         {
             transform.position += new Vector3(dir.x * platformSpeed * Time.deltaTime, dir.y * platformSpeed * Time.deltaTime, 0);
         }
@@ -41,10 +41,6 @@ public class MovingPlatform : MonoBehaviour
         UpdatePathDestination();
         Vector3 currentDest = GetDestinationOnPath();
         dir = (currentDest - transform.position).normalized;
-    }
-
-    public void powerPlatform(bool onORoff) {
-        this.powered = onORoff;
     }
 
     bool IsPathValid()

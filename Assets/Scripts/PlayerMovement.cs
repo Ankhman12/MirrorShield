@@ -139,7 +139,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Flip(true);
         }
-        else {
+        else if (dir > 0){
             Flip(false);
         }
         if (!isGroundDash && !isAirDash) // Walking

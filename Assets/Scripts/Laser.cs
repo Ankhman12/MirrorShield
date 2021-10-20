@@ -13,6 +13,7 @@ public class Laser : MonoBehaviour
 
     string mirrorTag = "Mirror";
     string playerTag = "Player";
+    string recieverTag = "LaserReciever";
     string breakableTag = "Breakable";
 
     //Vector3[] reflectPoints;
@@ -88,7 +89,11 @@ public class Laser : MonoBehaviour
                 {
                     hit.collider.gameObject.GetComponent<PlayerMovement>().Damage();
                     damageable = false;
-                } 
+                }
+                else if (hit.collider.transform.gameObject.CompareTag(recieverTag)) 
+                {
+                    hit.collider.gameObject.GetComponent<LaserReciever>().recieveLaser();
+                }
                 else if (hit.collider.gameObject.CompareTag(breakableTag))
                 {
                     Destroy(hit.collider.gameObject);
