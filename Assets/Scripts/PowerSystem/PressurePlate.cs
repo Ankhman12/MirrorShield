@@ -6,15 +6,15 @@ public class PressurePlate : MonoBehaviour
 {
     PowerState power;
     GameObject platePad;
-    SpringJoint2D spring;
-    float springDist;
+    public SpringJoint2D spring;
+    //float springDist;
     
     // Start is called before the first frame update
     void Start()
     {
         power = PowerState.Off;
         spring = GetComponent<SpringJoint2D>();
-        springDist = spring.distance;
+        //springDist = spring.distance;
     }
 
     // Update is called once per frame
@@ -33,11 +33,13 @@ public class PressurePlate : MonoBehaviour
 
             platePad = collision.gameObject;
             power = PowerState.On;
-            Debug.Log(power);
+            //Debug.Log(power);
         }
     }
 
-    
+    public PowerState isPowered() {
+        return this.power;
+    }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
@@ -49,7 +51,7 @@ public class PressurePlate : MonoBehaviour
             //spring.distance = springDist;
 
             power = PowerState.Off;
-            Debug.Log(power);
+            //Debug.Log(power);
             platePad = null;
         }
     }

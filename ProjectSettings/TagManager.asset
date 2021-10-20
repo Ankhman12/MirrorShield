@@ -8,6 +8,8 @@ TagManager:
   - Breakable
   - Enemy
   - Plate
+  - Powered
+  - LaserReciever
   layers:
   - Default
   - TransparentFX
@@ -44,6 +46,9 @@ TagManager:
   m_SortingLayers:
   - name: Background
     uniqueID: 3668653969
+    locked: 0
+  - name: Conduits
+    uniqueID: 1896800295
     locked: 0
   - name: Default
     uniqueID: 0
