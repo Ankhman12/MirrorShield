@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
     public Image[] hearts;
-    int health = 3;
+    int health;
 
     //Integer values for the player's speed and jumpSpeed
     public float speed;
@@ -47,13 +47,22 @@ public class PlayerMovement : MonoBehaviour
     //Character sprite controllers
     public SpriteRenderer spriteRenderer;
     public Animator anim;
-    
+
+    //amount of time between heart removals
+    float damageWaitTime = 3f;
+    //current wait time
+    float damageWait = 0f;
+    public bool damageable = true;
+
+    public float flashTime;
+    float flashTimer = 0f;
+
     void Start()
     {
         distanceToGround = GetComponent<Collider2D>().bounds.extents.y;
         controls = new PlayerControls();
         player = GetComponent<Rigidbody2D>();
-
+        health = hearts.Length;
         #region ControlMapping
         controls.Movement.SideMovement.performed += SideMovement;
         controls.Movement.SideMovement.canceled += ctx => dir = 0;
@@ -161,8 +170,41 @@ public class PlayerMovement : MonoBehaviour
         if (isAirDash || isGroundDash) {
             anim.SetBool("isDashing", true);
         }
+
+        if (!damageable)
+        {
+            damageWait += Time.fixedDeltaTime;
+            flashTimer += Time.fixedDeltaTime;
+            if (damageWait >= damageWaitTime)
+            {
+                damageable = true;
+                damageWait = 0;
+            }
+            if (flashTimer >= flashTime)
+            {
+                Flash();
+                flashTimer = 0;
+            }
+
+        }
+        else {
+            if (spriteRenderer.color != Color.white) {
+                spriteRenderer.color = Color.white;
+            }
+        }
     }
-    
+
+    void Flash() {
+        if (spriteRenderer.color == Color.white)
+        {
+            spriteRenderer.color = Color.red;
+        }
+        else {
+            spriteRenderer.color = Color.white;
+        }
+
+    }
+
     //Checks if the players distance to a collider on the grounded layer is below a certain threshold
     bool isGrounded()
     {
@@ -188,6 +230,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void Damage()
     {
+        if (!damageable) {
+            return;
+        }
+        damageable = false;
         if (health == 0)
             return;
         health--;
@@ -199,13 +245,15 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void AddHealth()
+    public bool AddHealth(int healthToAdd)
     {
-        if (health < hearts.Length-1)
+        if (health < hearts.Length)
         {
-            health++;
-            hearts[health].sprite = heart;
+            health += healthToAdd;
+            hearts[health - 1].sprite = heart;
+            return true;
         }
+        return false;
     }
 
     private void Flip(bool flipped) {

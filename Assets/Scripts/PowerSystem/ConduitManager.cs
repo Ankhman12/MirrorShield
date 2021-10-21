@@ -66,6 +66,11 @@ public class ConduitManager : MonoBehaviour
                     {
                         mp.powered = PowerState.On;
                     }
+                    BoxDispenser bd;
+                    if (poweredObjects[i].TryGetComponent<BoxDispenser>(out bd))
+                    {
+                        bd.powered = PowerState.On;
+                    }
                 }
                 if (pp.isPowered() == PowerState.Off)
                 {
@@ -74,6 +79,11 @@ public class ConduitManager : MonoBehaviour
                     if (poweredObjects[i].TryGetComponent<MovingPlatform>(out mp))
                     {
                         mp.powered = PowerState.Off;
+                    }
+                    BoxDispenser bd;
+                    if (poweredObjects[i].TryGetComponent<BoxDispenser>(out bd))
+                    {
+                        bd.powered = PowerState.Off;
                     }
                 }
             }
@@ -90,6 +100,11 @@ public class ConduitManager : MonoBehaviour
                     {
                         mp.powered = PowerState.On;
                     }
+                    BoxDispenser bd;
+                    if (poweredObjects[i].TryGetComponent<BoxDispenser>(out bd))
+                    {
+                        bd.powered = PowerState.On;
+                    }
                 }
                 if (lr.isPowered() == PowerState.Off)
                 {
@@ -98,6 +113,11 @@ public class ConduitManager : MonoBehaviour
                     if (poweredObjects[i].TryGetComponent<MovingPlatform>(out mp))
                     {
                         mp.powered = PowerState.Off;
+                    }
+                    BoxDispenser bd;
+                    if (poweredObjects[i].TryGetComponent<BoxDispenser>(out bd))
+                    {
+                        bd.powered = PowerState.Off;
                     }
                 }
             }

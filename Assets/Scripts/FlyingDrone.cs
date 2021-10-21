@@ -9,7 +9,7 @@ public class FlyingDrone : MonoBehaviour
     public PatrolPath patrol { get; set; }
     public float PathReachingRadius = 2f;
     int m_PathDestinationNodeIndex;
-    bool patrolOrder = false;
+    bool patrolOrder = true;
     public float maxCoord;
     public float minCoord;
     public LayerMask player;
@@ -21,7 +21,7 @@ public class FlyingDrone : MonoBehaviour
     bool paused;
     float pauseTime;
 
-    GameObject Player;
+    List<GameObject> bodies = new List<GameObject>();
 
     [Header("Patrol Settings")]
     [Tooltip("Patrol Time")]
@@ -104,24 +104,26 @@ public class FlyingDrone : MonoBehaviour
         {
             dir *= -1;
         }
-        else {
+        else if (!collision.gameObject.CompareTag("Player")) {
             patrolOrder = !patrolOrder;
             UpdatePathDestination(patrolOrder);
         }
         //paused = true;
-        if (collision.gameObject.CompareTag("Player"))
+        Rigidbody2D rb;
+        if (collision.gameObject.TryGetComponent<Rigidbody2D>(out rb))
         {
-            Player = collision.gameObject;
-            Player.transform.SetParent(this.transform);
+            bodies.Add(collision.gameObject);
+            rb.transform.SetParent(this.transform);
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (Player != null)//collision.gameObject.CompareTag("Player"))
+        Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
+        if (rb != null && bodies.Contains(rb.gameObject))//collision.gameObject.CompareTag("Player"))
         {
-            Player.transform.SetParent(null);
-            Player = null;
+            rb.transform.SetParent(null);
+            bodies.Remove(rb.gameObject);
         }
     }
 

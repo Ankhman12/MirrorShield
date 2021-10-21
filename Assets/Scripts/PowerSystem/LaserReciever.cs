@@ -24,6 +24,7 @@ public class LaserReciever : MonoBehaviour
 
     private void Update()
     {
+        //Debug.Log(powered);
         if (recievingLaser) {
             powered = PowerState.On;
             //spr.color = Color.green;
