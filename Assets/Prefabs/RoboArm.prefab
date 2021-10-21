@@ -234,7 +234,7 @@ MonoBehaviour:
   armJoint: {fileID: 1602635062161262841}
   cannon: {fileID: 7287911109949701676}
   pauseTime: 5
-  moveSpeed: 5
+  moveSpeed: 2
   armMoveSpeed: 5
   player:
     serializedVersion: 2
@@ -347,7 +347,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1602635063009134713}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1602635063290251431}
