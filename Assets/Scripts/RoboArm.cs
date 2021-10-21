@@ -44,7 +44,6 @@ public class RoboArm : MonoBehaviour
                     patrolPoint = 0;
                     nextPoint = patrolPoints[patrolPoint].position;
                 }
-                waiting = true;
             }
         } 
         else if (waiting)
@@ -84,7 +83,15 @@ public class RoboArm : MonoBehaviour
             baseJoint.transform.up = -(playerObj.transform.position - baseJoint.transform.position);
             float zRot = baseJoint.transform.eulerAngles.z;
             zRot = zRot % 360;
-            baseJoint.transform.eulerAngles = new Vector3(0, 0, 360 - zRot);
+            if (zRot > 270)
+            {
+                baseJoint.transform.eulerAngles = new Vector3(0, 0, (zRot - 270) / 2 + 270);
+            }
+            else
+            {
+                baseJoint.transform.eulerAngles = new Vector3(0, 0, 90-(90-zRot)/2);
+            }
+            Debug.Log(zRot);
             armJoint.transform.up = armJoint.transform.position - playerObj.transform.position;
             cannon.SetActive(true);
         }
