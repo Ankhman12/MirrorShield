@@ -41,6 +41,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""MultiTap(tapTime=0.1)""
+                },
+                {
+                    ""name"": ""Menu"",
+                    ""type"": ""Button"",
+                    ""id"": ""d5ae6a0c-c5e4-4f66-9e40-0072fc5251f9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -120,6 +128,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Dash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b4282479-45b1-4f9b-935e-482120f23533"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Menu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -158,6 +177,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Movement_SideMovement = m_Movement.FindAction("SideMovement", throwIfNotFound: true);
         m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
         m_Movement_Dash = m_Movement.FindAction("Dash", throwIfNotFound: true);
+        m_Movement_Menu = m_Movement.FindAction("Menu", throwIfNotFound: true);
         // Mirror
         m_Mirror = asset.FindActionMap("Mirror", throwIfNotFound: true);
         m_Mirror_Rotate = m_Mirror.FindAction("Rotate", throwIfNotFound: true);
@@ -213,6 +233,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Movement_SideMovement;
     private readonly InputAction m_Movement_Jump;
     private readonly InputAction m_Movement_Dash;
+    private readonly InputAction m_Movement_Menu;
     public struct MovementActions
     {
         private @PlayerControls m_Wrapper;
@@ -220,6 +241,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @SideMovement => m_Wrapper.m_Movement_SideMovement;
         public InputAction @Jump => m_Wrapper.m_Movement_Jump;
         public InputAction @Dash => m_Wrapper.m_Movement_Dash;
+        public InputAction @Menu => m_Wrapper.m_Movement_Menu;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -238,6 +260,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Dash.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnDash;
                 @Dash.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnDash;
                 @Dash.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnDash;
+                @Menu.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnMenu;
+                @Menu.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnMenu;
+                @Menu.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnMenu;
             }
             m_Wrapper.m_MovementActionsCallbackInterface = instance;
             if (instance != null)
@@ -251,6 +276,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Dash.started += instance.OnDash;
                 @Dash.performed += instance.OnDash;
                 @Dash.canceled += instance.OnDash;
+                @Menu.started += instance.OnMenu;
+                @Menu.performed += instance.OnMenu;
+                @Menu.canceled += instance.OnMenu;
             }
         }
     }
@@ -293,6 +321,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnSideMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
+        void OnMenu(InputAction.CallbackContext context);
     }
     public interface IMirrorActions
     {

@@ -56,6 +56,8 @@ public class PlayerMovement : MonoBehaviour
 
     public float flashTime;
     float flashTimer = 0f;
+    public GameObject menu;
+    bool paused = false;
 
     void Start()
     {
@@ -72,7 +74,27 @@ public class PlayerMovement : MonoBehaviour
         controls.Movement.Jump.Enable();
         controls.Movement.Dash.performed += Dash;
         controls.Movement.Dash.Enable();
+        controls.Movement.Menu.performed += Menu;
+        controls.Movement.Menu.Enable();
         #endregion
+    }
+    void Menu(CallbackContext ctx)
+    {
+        paused = !paused;
+        if (paused)
+        {
+            Time.timeScale = 0;
+            menu.SetActive(true);
+        }
+        else
+        {
+            Resume();
+        }
+    }
+    public void Resume()
+    {
+        Time.timeScale = 1;
+        menu.SetActive(false);
     }
     void SideMovement(CallbackContext ctx)
     {
