@@ -281,4 +281,8 @@ public class PlayerMovement : MonoBehaviour
     private void Flip(bool flipped) {
         spriteRenderer.flipX = flipped;
     }
+    private void OnDisable()
+    {
+        controls.Disable();
+    }
 }
